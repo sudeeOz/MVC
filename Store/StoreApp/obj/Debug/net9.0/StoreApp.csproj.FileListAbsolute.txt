@@ -26,3 +26,5 @@ C:\Users\Asus\OneDrive\Desktop\MVC\Store\StoreApp\obj\Debug\net9.0\refint\StoreA
 C:\Users\Asus\OneDrive\Desktop\MVC\Store\StoreApp\obj\Debug\net9.0\StoreApp.pdb
 C:\Users\Asus\OneDrive\Desktop\MVC\Store\StoreApp\obj\Debug\net9.0\StoreApp.genruntimeconfig.cache
 C:\Users\Asus\OneDrive\Desktop\MVC\Store\StoreApp\obj\Debug\net9.0\ref\StoreApp.dll
+C:\Users\Asus\OneDrive\Desktop\MVC\Store\StoreApp\obj\Debug\net9.0\StoreApp.RazorAssemblyInfo.cache
+C:\Users\Asus\OneDrive\Desktop\MVC\Store\StoreApp\obj\Debug\net9.0\StoreApp.RazorAssemblyInfo.cs
