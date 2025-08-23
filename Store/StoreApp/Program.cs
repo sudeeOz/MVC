@@ -3,20 +3,45 @@ using StoreApp.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews(); //middleway
-builder.Services.AddDbContext<RepositoryContext>(options =>
-{
-    options.UseSqlite(builder.Configuration.GetConnectionString("sqlconnection"));
-});
+// -------------------------------------------------
+// Service Registrations (app.Build()'dan önce yapılır)
+// -------------------------------------------------
+builder.Services.AddControllersWithViews()
+                .AddRazorRuntimeCompilation();
 
+builder.Services.AddDbContext<RepositoryContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("sqlconnection"))
+);
 
 var app = builder.Build();
 
-app.UseHttpsRedirection();
-app.UseRouting();
+// -------------------------------------------------
+// Middleware Pipeline
+// -------------------------------------------------
+if (app.Environment.IsDevelopment())
+{
+    // Geliştirme ortamında detaylı hata sayfası
+    app.UseDeveloperExceptionPage();
+}
+else
+{
+    // Prod ortamı için global hata yakalama
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
 
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+
+app.UseRouting();
+app.UseAuthorization();
+
+// -------------------------------------------------
+// Endpoint Mapping
+// -------------------------------------------------
 app.MapControllerRoute(
-    name:"default",
-    pattern:"{controller=Home}/{action=Index}/{id?}");
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}"
+);
 
 app.Run();
