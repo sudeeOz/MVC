@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TestOBS")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0fc7a4ec528a22514dcdadf01bb5c968d400fc68")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e0fd2e06d2b659777603c601a69efaf6acd944ea")]
 [assembly: System.Reflection.AssemblyProductAttribute("TestOBS")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TestOBS")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
