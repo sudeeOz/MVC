@@ -59,7 +59,6 @@ namespace TestOBS.Controllers
                 {
 
                     ModelState.AddModelError("", "Veritabanı hatası: " + ex.Message);
-                    // Hata ile aynı sayfada kal ve mesajı göster
                     return View(model);
                 }
 

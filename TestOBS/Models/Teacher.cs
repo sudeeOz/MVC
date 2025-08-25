@@ -20,9 +20,7 @@ namespace TestOBS.Models
 
         [Required]
         public string Password { get; set; } = string.Empty;
-
-        // Öğretmene özel alanlar
-        public string Branch { get; set; } = string.Empty;   // Branşı (Matematik, Fizik vb.)
-        public string Title { get; set; } = string.Empty;    // Ünvan (Dr., Doç., Prof. gibi)
+        public string Branch { get; set; } = string.Empty;  
+        public ICollection<Lesson> Lessons { get; set; } = new List<Lesson>();
     }
 }

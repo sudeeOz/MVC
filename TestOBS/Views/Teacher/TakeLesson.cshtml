@@ -1,0 +1,607 @@
+@model TestOBS.Models.Lesson
+
+<style>
+    /* Animasyonlar */
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @@keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    @@keyframes shimmer {
+        0% {
+            background-position: -468px 0;
+        }
+        100% {
+            background-position: 468px 0;
+        }
+    }
+
+    /* Ana container */
+    .lesson-container {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 2rem 0;
+        animation: fadeInUp 0.8s ease-out;
+    }
+
+    .lesson-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        margin: 1rem;
+        animation: slideInLeft 1s ease-out 0.2s both;
+    }
+
+    .page-title {
+        color: #2c3e50;
+        font-weight: 700;
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        animation: fadeInUp 1s ease-out 0.4s both;
+    }
+
+    .page-description {
+        color: #5a6c7d;
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        animation: fadeInUp 1s ease-out 0.6s both;
+    }
+
+    .lesson-list-title {
+        color: #34495e;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        position: relative;
+        animation: fadeInUp 1s ease-out 0.8s both;
+    }
+
+    .lesson-list-title::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        border-radius: 2px;
+    }
+
+    /* Ders listesi */
+    .lesson-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .lesson-item {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border: 2px solid transparent;
+        border-radius: 15px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+        animation: fadeInUp 1s ease-out calc(1s + var(--delay)) both;
+    }
+
+    .lesson-item input[type="checkbox"] {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .lesson-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+        transition: left 0.5s;
+    }
+
+    .lesson-item:hover::before {
+        left: 100%;
+    }
+
+    .lesson-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    }
+
+    .lesson-item.selected {
+        border-color: #667eea;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(102, 126, 234, 0.3);
+    }
+
+    .lesson-item.selected .lesson-name {
+        color: white;
+    }
+
+    .lesson-item.selected .lesson-department {
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .lesson-info {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+    }
+
+    .lesson-name {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.8rem;
+        line-height: 1.4;
+    }
+
+    .lesson-department {
+        font-size: 0.9rem;
+        color: #7f8c8d;
+        font-style: italic;
+        background: rgba(103, 126, 234, 0.1);
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        display: inline-block;
+    }
+
+    .lesson-item.selected .lesson-department {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Seçim göstergesi */
+    .selection-indicator {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: #667eea;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        opacity: 0;
+        transform: scale(0);
+        transition: all 0.3s ease;
+    }
+
+    .lesson-item.selected .selection-indicator {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    /* Kayıt yaptır butonu */
+    .register-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 50px;
+        padding: 1rem 3rem;
+        color: white;
+        font-size: 1.2rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        position: relative;
+        overflow: hidden;
+        animation: fadeInUp 1s ease-out 1.4s both;
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .register-btn.active {
+        opacity: 1;
+        cursor: pointer;
+    }
+
+    .register-btn.active::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    .register-btn.active:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        animation: pulse 2s infinite;
+    }
+
+    .register-btn.active:hover::before {
+        left: 100%;
+    }
+
+    .register-btn:active {
+        transform: translateY(-1px);
+    }
+
+    /* Seçilen dersler göstergesi */
+    .selected-count {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        display: inline-block;
+        animation: fadeInUp 0.5s ease-out;
+    }
+
+    /* Responsive tasarım */
+    @@media (max-width: 768px) {
+        .lesson-container {
+            padding: 1rem;
+        }
+        
+        .lesson-card {
+            margin: 0.5rem;
+            padding: 1.5rem;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+        }
+        
+        .page-description {
+            font-size: 1rem;
+        }
+        
+        .lesson-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        
+        .lesson-item {
+            padding: 1rem;
+        }
+        
+        .lesson-name {
+            font-size: 1.1rem;
+        }
+        
+        .register-btn {
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .page-title {
+            font-size: 1.8rem;
+        }
+        
+        .lesson-card {
+            padding: 1rem;
+        }
+        
+        .register-btn {
+            width: 100%;
+            padding: 1rem;
+        }
+    }
+</style>
+
+<div class="lesson-container">
+    <div class="container">
+        <div class="lesson-card">
+            <h1 class="page-title text-center">Ders Kayıt Sayfası</h1>
+            
+            <p class="page-description text-center">
+                Almak istediğiniz dersleri seçin ve kayıt yaptırın.
+            </p>
+            
+            <h2 class="lesson-list-title text-center">Mevcut Dersler</h2>
+            
+            <form id="lessonForm" method="post" action="/Lesson/RegisterLessons">
+                <!-- Ders listesi -->
+                <div class="lesson-grid">
+                    <!-- Bilgisayar Mühendisliği -->
+                    <label class="lesson-item" style="--delay: 0s" for="lesson1">
+                        <input type="checkbox" name="selectedLessons" value="Veri Yapıları ve Algoritmalar|Bilgisayar Mühendisliği|4" id="lesson1">
+                        <div class="lesson-info">
+                            <h3 class="lesson-name">Veri Yapıları ve Algoritmalar</h3>
+                            <span class="lesson-department">Bilgisayar Mühendisliği</span>
+                        </div>
+                        <div class="selection-indicator">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </label>
+                    
+                    <label class="lesson-item" style="--delay: 0.1s" for="lesson2">
+                        <input type="checkbox" name="selectedLessons" value="Nesne Yönelimli Programlama|Bilgisayar Mühendisliği|3" id="lesson2">
+                        <div class="lesson-info">
+                            <h3 class="lesson-name">Nesne Yönelimli Programlama</h3>
+                            <span class="lesson-department">Bilgisayar Mühendisliği</span>
+                        </div>
+                        <div class="selection-indicator">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </label>
+                    
+                    <!-- Elektrik-Elektronik Mühendisliği -->
+                    <label class="lesson-item" style="--delay: 0.2s" for="lesson3">
+                        <input type="checkbox" name="selectedLessons" value="Devre Analizi|Elektrik-Elektronik Mühendisliği|4" id="lesson3">
+                        <div class="lesson-info">
+                            <h3 class="lesson-name">Devre Analizi</h3>
+                            <span class="lesson-department">Elektrik-Elektronik Mühendisliği</span>
+                        </div>
+                        <div class="selection-indicator">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </label>
+                    
+                    <label class="lesson-item" style="--delay: 0.3s" for="lesson4">
+                        <input type="checkbox" name="selectedLessons" value="Elektromanyetik Alan Teorisi|Elektrik-Elektronik Mühendisliği|3" id="lesson4">
+                        <div class="lesson-info">
+                            <h3 class="lesson-name">Elektromanyetik Alan Teorisi</h3>
+                            <span class="lesson-department">Elektrik-Elektronik Mühendisliği</span>
+                        </div>
+                        <div class="selection-indicator">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </label>
+                    
+                    <!-- Makine Mühendisliği -->
+                    <label class="lesson-item" style="--delay: 0.4s" for="lesson5">
+                        <input type="checkbox" name="selectedLessons" value="Termodinamik|Makine Mühendisliği|4" id="lesson5">
+                        <div class="lesson-info">
+                            <h3 class="lesson-name">Termodinamik</h3>
+                            <span class="lesson-department">Makine Mühendisliği</span>
+                        </div>
+                        <div class="selection-indicator">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </label>
+                    
+                    <label class="lesson-item" style="--delay: 0.5s" for="lesson6">
+                        <input type="checkbox" name="selectedLessons" value="Malzeme Bilimi|Makine Mühendisliği|3" id="lesson6">
+                        <div class="lesson-info">
+                            <h3 class="lesson-name">Malzeme Bilimi</h3>
+                            <span class="lesson-department">Makine Mühendisliği</span>
+                        </div>
+                        <div class="selection-indicator">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </label>
+                    
+                    <!-- Endüstri Mühendisliği -->
+                    <label class="lesson-item" style="--delay: 0.6s" for="lesson7">
+                        <input type="checkbox" name="selectedLessons" value="Yöneylem Araştırması|Endüstri Mühendisliği|4" id="lesson7">
+                        <div class="lesson-info">
+                            <h3 class="lesson-name">Yöneylem Araştırması</h3>
+                            <span class="lesson-department">Endüstri Mühendisliği</span>
+                        </div>
+                        <div class="selection-indicator">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </label>
+                    
+                    <label class="lesson-item" style="--delay: 0.7s" for="lesson8">
+                        <input type="checkbox" name="selectedLessons" value="Üretim Planlama ve Kontrol|Endüstri Mühendisliği|3" id="lesson8">
+                        <div class="lesson-info">
+                            <h3 class="lesson-name">Üretim Planlama ve Kontrol</h3>
+                            <span class="lesson-department">Endüstri Mühendisliği</span>
+                        </div>
+                        <div class="selection-indicator">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </label>
+                    
+                    <!-- İşletme -->
+                    <label class="lesson-item" style="--delay: 0.8s" for="lesson9">
+                        <input type="checkbox" name="selectedLessons" value="Pazarlama Yönetimi|İşletme|3" id="lesson9">
+                        <div class="lesson-info">
+                            <h3 class="lesson-name">Pazarlama Yönetimi</h3>
+                            <span class="lesson-department">İşletme</span>
+                        </div>
+                        <div class="selection-indicator">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </label>
+                    
+                    <label class="lesson-item" style="--delay: 0.9s" for="lesson10">
+                        <input type="checkbox" name="selectedLessons" value="Mali Analiz|İşletme|4" id="lesson10">
+                        <div class="lesson-info">
+                            <h3 class="lesson-name">Mali Analiz</h3>
+                            <span class="lesson-department">İşletme</span>
+                        </div>
+                        <div class="selection-indicator">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </label>
+                    
+                    <!-- İktisat -->
+                    <label class="lesson-item" style="--delay: 1.0s" for="lesson11">
+                        <input type="checkbox" name="selectedLessons" value="Mikroekonomi|İktisat|3" id="lesson11">
+                        <div class="lesson-info">
+                            <h3 class="lesson-name">Mikroekonomi</h3>
+                            <span class="lesson-department">İktisat</span>
+                        </div>
+                        <div class="selection-indicator">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </label>
+                    
+                    <label class="lesson-item" style="--delay: 1.1s" for="lesson12">
+                        <input type="checkbox" name="selectedLessons" value="Makroekonomi|İktisat|3" id="lesson12">
+                        <div class="lesson-info">
+                            <h3 class="lesson-name">Makroekonomi</h3>
+                            <span class="lesson-department">İktisat</span>
+                        </div>
+                        <div class="selection-indicator">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </label>
+                    
+                    <!-- Matematik -->
+                    <label class="lesson-item" style="--delay: 1.2s" for="lesson13">
+                        <input type="checkbox" name="selectedLessons" value="Diferansiyel Denklemler|Matematik|4" id="lesson13">
+                        <div class="lesson-info">
+                            <h3 class="lesson-name">Diferansiyel Denklemler</h3>
+                            <span class="lesson-department">Matematik</span>
+                        </div>
+                        <div class="selection-indicator">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </label>
+                    
+                    <label class="lesson-item" style="--delay: 1.3s" for="lesson14">
+                        <input type="checkbox" name="selectedLessons" value="Lineer Cebir|Matematik|3" id="lesson14">
+                        <div class="lesson-info">
+                            <h3 class="lesson-name">Lineer Cebir</h3>
+                            <span class="lesson-department">Matematik</span>
+                        </div>
+                        <div class="selection-indicator">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </label>
+                    
+                    <!-- Fizik -->
+                    <label class="lesson-item" style="--delay: 1.4s" for="lesson15">
+                        <input type="checkbox" name="selectedLessons" value="Kuantum Fiziği|Fizik|4" id="lesson15">
+                        <div class="lesson-info">
+                            <h3 class="lesson-name">Kuantum Fiziği</h3>
+                            <span class="lesson-department">Fizik</span>
+                        </div>
+                        <div class="selection-indicator">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </label>
+                    
+                    <label class="lesson-item" style="--delay: 1.5s" for="lesson16">
+                        <input type="checkbox" name="selectedLessons" value="Elektrodinamik|Fizik|4" id="lesson16">
+                        <div class="lesson-info">
+                            <h3 class="lesson-name">Elektrodinamik</h3>
+                            <span class="lesson-department">Fizik</span>
+                        </div>
+                        <div class="selection-indicator">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </label>
+                </div>
+                
+                <div class="text-center">
+                    <div id="selectedCount" class="selected-count" style="display: none;">
+                        <i class="fas fa-list-check me-1"></i>
+                        <span id="countText">0</span> ders seçildi
+                    </div>
+                    
+                    <button type="submit" id="registerBtn" class="register-btn">
+                        <i class="fas fa-graduation-cap me-2"></i>
+                        Kayıt Yaptır
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Font Awesome için CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkboxes = document.querySelectorAll('input[type="checkbox"][name="selectedLessons"]');
+        const registerBtn = document.getElementById('registerBtn');
+        const selectedCount = document.getElementById('selectedCount');
+        const countText = document.getElementById('countText');
+        
+        function updateSelection() {
+            const checkedCount = document.querySelectorAll('input[type="checkbox"][name="selectedLessons"]:checked').length;
+            
+            // Buton durumunu güncelle
+            if (checkedCount > 0) {
+                registerBtn.classList.add('active');
+                selectedCount.style.display = 'inline-block';
+                countText.textContent = checkedCount;
+            } else {
+                registerBtn.classList.remove('active');
+                selectedCount.style.display = 'none';
+            }
+        }
+        
+        // Checkbox'lara event listener ekle
+        checkboxes.forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                const lessonItem = this.closest('.lesson-item');
+                if (this.checked) {
+                    lessonItem.classList.add('selected');
+                } else {
+                    lessonItem.classList.remove('selected');
+                }
+                updateSelection();
+            });
+        });
+        
+        // Form submit kontrolü
+        document.getElementById('lessonForm').addEventListener('submit', function(e) {
+            const checkedCount = document.querySelectorAll('input[type="checkbox"][name="selectedLessons"]:checked').length;
+            
+            if (checkedCount === 0) {
+                e.preventDefault();
+                alert('Lütfen en az bir ders seçiniz!');
+                return false;
+            }
+            
+            // Başarı mesajı
+            if (confirm(`${checkedCount} ders kayıt yaptırılacak. Onaylıyor musunuz?`)) {
+                return true;
+            } else {
+                e.preventDefault();
+                return false;
+            }
+        });
+    });
+</script>

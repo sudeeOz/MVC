@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TestOBS.Models;
+using System.Linq;
 
 namespace TestOBS.Models
 {
@@ -10,6 +11,7 @@ namespace TestOBS.Models
         public DbSet<Admin> Admins { get; set; }
         public DbSet<Student> Students { get; set; }
         public DbSet<Teacher> Teachers { get; set; }
+        public DbSet<Lesson> Lessons { get; set; }  
 
         internal static bool ReferenceEquals(Func<object, bool> value)
         {
