@@ -232,10 +232,15 @@
             <div class="text-center">
                 <i class="fas fa-chalkboard-teacher header-icon"></i>
             </div>
+             <a href="#" class="logout-btn" >
+                    <form asp-action="Login" asp-controller="Account" method="post">
+                        <button type="submit" class="btn btn-link">Çıkış Yap</button>
+                    </form>
+                </a>
 
             <!-- Welcome Message -->
             <h1 class="welcome-title text-center">
-                Öğretmen Paneline Hoş Geldiniz
+                Sayın @Model.FirstName Öğretmen Paneline Hoş Geldiniz
             </h1>
 
             <div class="divider"></div>
@@ -254,12 +259,8 @@
                     </button>
                 </form>
 
-                <a class="btn btn-custom" asp-action="CreateStudent">
-                    <i class="fas fa-user-graduate fa-3x student-icon"></i>
-                    <span>Yeni Öğrenci<br>Ekle</span>
-                </a>
 
-                <a class="btn btn-custom" asp-action="TakeLesson">
+                <a class="btn btn-custom" asp-action="TakeLesson" asp-route-id="@Model.Id">
                     <i class="fas fa-book-open fa-3x lesson-icon"></i>
                     <span>Yeni Ders<br>Ekle</span>
                 </a>

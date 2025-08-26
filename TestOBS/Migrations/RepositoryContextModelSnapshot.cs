@@ -72,10 +72,15 @@ namespace TestOBS.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("StudentId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int?>("TeacherId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
 
                     b.HasIndex("TeacherId");
 
@@ -85,7 +90,6 @@ namespace TestOBS.Migrations
             modelBuilder.Entity("TestOBS.Models.Student", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("BirthOfDate")
@@ -101,6 +105,7 @@ namespace TestOBS.Migrations
 
                     b.Property<string>("FirstName")
                         .IsRequired()
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Grade")
@@ -108,14 +113,12 @@ namespace TestOBS.Migrations
 
                     b.Property<string>("LastName")
                         .IsRequired()
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("StudentNumber")
-                        .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -159,9 +162,20 @@ namespace TestOBS.Migrations
 
             modelBuilder.Entity("TestOBS.Models.Lesson", b =>
                 {
-                    b.HasOne("TestOBS.Models.Teacher", null)
+                    b.HasOne("TestOBS.Models.Student", null)
+                        .WithMany("Lessons")
+                        .HasForeignKey("StudentId");
+
+                    b.HasOne("TestOBS.Models.Teacher", "Teacher")
                         .WithMany("Lessons")
                         .HasForeignKey("TeacherId");
+
+                    b.Navigation("Teacher");
+                });
+
+            modelBuilder.Entity("TestOBS.Models.Student", b =>
+                {
+                    b.Navigation("Lessons");
                 });
 
             modelBuilder.Entity("TestOBS.Models.Teacher", b =>

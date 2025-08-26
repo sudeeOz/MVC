@@ -84,6 +84,28 @@
         animation: fadeInUp 1s ease-out 0.6s both;
     }
 
+    .student-info {
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        text-align: center;
+        animation: fadeInUp 1s ease-out 0.5s both;
+    }
+
+    .student-name {
+        color: #1565c0;
+        font-weight: 600;
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .student-department {
+        color: #1976d2;
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
     .lesson-list-title {
         color: #34495e;
         font-weight: 600;
@@ -107,7 +129,7 @@
     /* Ders listesi */
     .lesson-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
         gap: 1.5rem;
         margin-bottom: 2rem;
     }
@@ -165,12 +187,13 @@
         color: white;
     }
 
-    .lesson-item.selected .lesson-department {
-        color: rgba(255, 255, 255, 0.8);
+    .lesson-item.selected .lesson-teacher {
+        color: rgba(255, 255, 255, 0.9);
     }
 
-    .lesson-item.selected .lesson-credit {
-        color: rgba(255, 255, 255, 0.9);
+    .lesson-item.selected .lesson-credit,
+    .lesson-item.selected .lesson-code {
+        color: rgba(255, 255, 255, 0.8);
     }
 
     .lesson-info {
@@ -187,52 +210,76 @@
         line-height: 1.4;
     }
 
-    .lesson-department {
-        font-size: 0.9rem;
-        color: #7f8c8d;
-        font-style: italic;
-        background: rgba(103, 126, 234, 0.1);
+    .lesson-code {
+        font-size: 0.85rem;
+        color: #6c757d;
+        font-weight: 600;
+        background: rgba(108, 117, 125, 0.1);
         padding: 0.3rem 0.8rem;
         border-radius: 15px;
         display: inline-block;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.8rem;
+        letter-spacing: 1px;
+    }
+
+    .lesson-teacher {
+        font-size: 1rem;
+        color: #495057;
+        font-weight: 500;
+        background: rgba(103, 126, 234, 0.1);
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        display: inline-block;
+        margin-bottom: 0.8rem;
+    }
+
+    .lesson-teacher::before {
+        content: '👨‍🏫 ';
+        margin-right: 0.5rem;
     }
 
     .lesson-credit {
         font-size: 0.8rem;
         color: #6c757d;
         font-weight: 500;
-        background: rgba(108, 117, 125, 0.1);
-        padding: 0.2rem 0.6rem;
-        border-radius: 10px;
+        background: rgba(40, 167, 69, 0.1);
+        color: #28a745;
+        padding: 0.3rem 0.8rem;
+        border-radius: 12px;
         display: inline-block;
     }
 
-    .lesson-item.selected .lesson-department {
+    .lesson-item.selected .lesson-teacher {
         background: rgba(255, 255, 255, 0.2);
     }
 
     .lesson-item.selected .lesson-credit {
+        background: rgba(255, 255, 255, 0.15);
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .lesson-item.selected .lesson-code {
         background: rgba(255, 255, 255, 0.15);
     }
 
     /* Seçim göstergesi */
     .selection-indicator {
         position: absolute;
-        top: 10px;
-        right: 10px;
-        width: 24px;
-        height: 24px;
+        top: 15px;
+        right: 15px;
+        width: 30px;
+        height: 30px;
         border-radius: 50%;
-        background: #667eea;
+        background: #28a745;
         color: white;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 14px;
+        font-size: 16px;
         opacity: 0;
         transform: scale(0);
         transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
     }
 
     .lesson-item.selected .selection-indicator {
@@ -242,7 +289,7 @@
 
     /* Kayıt yaptır butonu */
     .register-btn {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
         border: none;
         border-radius: 50px;
         padding: 1rem 3rem;
@@ -252,7 +299,7 @@
         text-transform: uppercase;
         letter-spacing: 1px;
         transition: all 0.3s ease;
-        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
         position: relative;
         overflow: hidden;
         animation: fadeInUp 1s ease-out 1.4s both;
@@ -278,7 +325,7 @@
 
     .register-btn.active:hover {
         transform: translateY(-3px);
-        box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 15px 30px rgba(40, 167, 69, 0.4);
         animation: pulse 2s infinite;
     }
 
@@ -292,15 +339,16 @@
 
     /* Seçilen dersler göstergesi */
     .selected-count {
-        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);
         color: white;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-size: 0.9rem;
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        font-size: 1rem;
         font-weight: 600;
-        margin-bottom: 1rem;
+        margin-bottom: 1.5rem;
         display: inline-block;
         animation: fadeInUp 0.5s ease-out;
+        box-shadow: 0 5px 15px rgba(23, 162, 184, 0.3);
     }
 
     /* Boş ders listesi durumu */
@@ -309,15 +357,44 @@
         color: #6c757d;
         font-size: 1.2rem;
         margin: 3rem 0;
-        padding: 2rem;
-        background: rgba(108, 117, 125, 0.1);
-        border-radius: 15px;
+        padding: 3rem 2rem;
+        background: rgba(108, 117, 125, 0.05);
+        border-radius: 20px;
+        border: 2px dashed #adb5bd;
     }
 
     .no-lessons i {
-        font-size: 3rem;
-        margin-bottom: 1rem;
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
         color: #adb5bd;
+    }
+
+    .no-lessons h3 {
+        color: #495057;
+        margin-bottom: 1rem;
+    }
+
+    /* Geri dön butonu */
+    .back-btn {
+        background: rgba(108, 117, 125, 0.1);
+        color: #6c757d;
+        border: 2px solid #dee2e6;
+        border-radius: 25px;
+        padding: 0.8rem 1.5rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .back-btn:hover {
+        background: #6c757d;
+        color: white;
+        text-decoration: none;
+        transform: translateY(-2px);
     }
 
     /* Responsive tasarım */
@@ -345,7 +422,7 @@
         }
 
         .lesson-item {
-            padding: 1rem;
+            padding: 1.2rem;
         }
 
         .lesson-name {
@@ -355,6 +432,14 @@
         .register-btn {
             padding: 0.8rem 2rem;
             font-size: 1rem;
+        }
+
+        .student-info {
+            padding: 1rem;
+        }
+
+        .student-name {
+            font-size: 1.1rem;
         }
     }
 
@@ -371,24 +456,53 @@
             width: 100%;
             padding: 1rem;
         }
+
+        .lesson-item {
+            padding: 1rem;
+        }
+
+        .lesson-teacher {
+            font-size: 0.9rem;
+        }
     }
 </style>
 
 <div class="lesson-container">
     <div class="container">
         <div class="lesson-card">
+            <div class="text-center mb-4">
+                <a href="@Url.Action("Dashboard", "Student")" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    Geri Dön
+                </a>
+            </div>
+
             <h1 class="page-title text-center">Ders Kayıt Sayfası</h1>
 
             <p class="page-description text-center">
-                Almak istediğiniz dersleri seçin ve kayıt yaptırın.
+                Bölümünüze ait dersleri seçin ve kayıt yaptırın.
             </p>
 
-            <h2 class="lesson-list-title text-center">Mevcut Dersler</h2>
+            <!-- Öğrenci bilgileri -->
+            <div class="student-info">
+                <div class="student-name">
+                    <i class="fas fa-user-graduate me-2"></i>
+                    @ViewBag.StudentName
+                </div>
+                <div class="student-department">
+                    <i class="fas fa-university me-2"></i>
+                    @ViewBag.StudentDepartment Bölümü - @ViewBag.StudentGrade. Sınıf
+                </div>
+            </div>
+
+            <h2 class="lesson-list-title text-center">
+                @ViewBag.StudentDepartment Bölümü Dersleri
+            </h2>
 
             @if (Model != null && Model.Any())
             {
-                <form asp-action="TakeLesson" asp-controller="Teacher" method="post">
-                    <input type="hidden" name="Id" value="@ViewBag.TeacherId" />
+                <form asp-action="TakeLesson" asp-controller="Student" method="post" id="lessonForm">
+                    <input type="hidden" name="StudentId" value="@ViewBag.StudentId" />
                     @Html.AntiForgeryToken()
 
                     <div class="lesson-grid">
@@ -400,10 +514,13 @@
                             <label class="lesson-item" style="--delay: @(delay)s" for="lesson@(lesson.Id)">
                                 <input type="checkbox" name="selectedLessons" value="@lesson.Id" id="lesson@(lesson.Id)">
                                 <div class="lesson-info">
+                                    <div class="lesson-code">@lesson.Id</div>
                                     <h3 class="lesson-name">@lesson.Name</h3>
-                                    <span class="lesson-department">@lesson.Department</span>
-                                    <br>
-                                    <span class="lesson-credit">@lesson.Credit Kredi</span>
+                                    <div class="lesson-teacher">@lesson.TeacherId</div>
+                                    <div class="lesson-credit">
+                                        <i class="fas fa-star me-1"></i>
+                                        @lesson.Credit Kredi
+                                    </div>
                                 </div>
                                 <div class="selection-indicator">
                                     <i class="fas fa-check"></i>
@@ -414,12 +531,13 @@
 
                     <div class="text-center">
                         <div id="selectedCount" class="selected-count" style="display: none;">
-                            <i class="fas fa-list-check me-1"></i>
+                            <i class="fas fa-clipboard-list me-2"></i>
                             <span id="countText">0</span> ders seçildi
                         </div>
+                        <br>
                         <button type="submit" id="registerBtn" class="register-btn">
                             <i class="fas fa-graduation-cap me-2"></i>
-                            Kayıt Yaptır
+                            Derslere Kayıt Ol
                         </button>
                     </div>
                 </form>
@@ -428,10 +546,18 @@
             {
                 <div class="no-lessons">
                     <i class="fas fa-book-open"></i>
-                    <h3>Henüz Kayıt Açık Ders Bulunmuyor</h3>
-                    <p>Şu anda alınabilecek ders bulunmamaktadır. Lütfen daha sonra tekrar kontrol ediniz.</p>
+                    <h3>Bölümünüze Ait Açık Ders Bulunmuyor</h3>
+                    <p>@ViewBag.StudentDepartment bölümü için şu anda alınabilecek ders bulunmamaktadır.</p>
+                    <p>Lütfen daha sonra tekrar kontrol ediniz.</p>
                 </div>
             }
+
+            <div class="text-center mt-4">
+                <small class="text-muted">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Sadece kendi bölümünüze ait dersler görüntülenmektedir.
+                </small>
+            </div>
         </div>
     </div>
 </div>
@@ -483,7 +609,10 @@
                     return false;
                 }
 
-                if (confirm(`${checkedCount} ders kayıt yaptırılacak. Onaylıyor musunuz?`)) {
+                if (confirm(`${checkedCount} ders için kayıt yaptırılacak. Onaylıyor musunuz?`)) {
+                    // Buton metnini değiştir ve devre dışı bırak
+                    registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Kaydediliyor...';
+                    registerBtn.disabled = true;
                     return true;
                 } else {
                     e.preventDefault();
@@ -491,5 +620,11 @@
                 }
             });
         }
+
+        // Sayfa yüklendiğinde animasyon gecikmelerini ayarla
+        const lessonItems = document.querySelectorAll('.lesson-item');
+        lessonItems.forEach((item, index) => {
+            item.style.animationDelay = `${1 + (index * 0.1)}s`;
+        });
     });
 </script>

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TestOBS.Models;
 using System.Linq;
+using Microsoft.AspNetCore.SignalR.Protocol;
 
 namespace TestOBS.Controllers
 {
@@ -19,23 +20,8 @@ namespace TestOBS.Controllers
             var teachers = _context.Teachers.ToList();
             return View(teachers);
         }
-        public IActionResult Create()
-        {
-            return View();
-        }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(Teacher teacher)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Teachers.Add(teacher);
-                _context.SaveChanges();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(teacher);
-        }
+
         [HttpGet]
 
         public IActionResult Login()
@@ -50,7 +36,7 @@ namespace TestOBS.Controllers
             var teacher = _context.Teachers.FirstOrDefault(a => a.Id == id && a.Password == password);
             if (teacher != null)
             {
-                   return RedirectToAction("Dashboard", new { id = teacher.Id });
+                return RedirectToAction("Dashboard", new { id = teacher.Id });
             }
             else
             {
@@ -58,10 +44,11 @@ namespace TestOBS.Controllers
                 return View();
             }
         }
-       [HttpGet] 
+        [HttpGet]
         public IActionResult Dashboard(int id)
         {
             var teacher = _context.Teachers
+               .Include(t => t.Lessons)
                 .FirstOrDefault(t => t.Id == id && t.Password == t.Password);
 
             if (teacher == null)
@@ -71,26 +58,39 @@ namespace TestOBS.Controllers
 
             return View(teacher);
         }
+
         [HttpGet]
-        public IActionResult TakeLesson()
+        public IActionResult TakeLesson(int Id)
         {
-            return View("~/Views/Teacher/TakeLesson.cshtml");
+            var lessons = _context.Lessons.ToList();
+            ViewBag.TeacherId = Id;
+            return View(lessons);
         }
-
         [HttpPost]
-
-        public IActionResult TakeLesson(Lesson lesson)
+        [ValidateAntiForgeryToken]
+        public IActionResult TakeLesson(int Id, List<int> selectedLessons)
         {
-            if (ModelState.IsValid)
+            var teacher = _context.Teachers
+            .Include(t => t.Lessons)
+            .FirstOrDefault(t => t.Id == Id);
+
+            if (teacher == null)
             {
-                _context.Lessons.Add(lesson);
-                _context.SaveChanges();
-                return RedirectToAction("Dashboard", new { id = lesson.Id });
+                return NotFound("Öğretmen bulunamadı");
             }
-            else
+
+            foreach (var lessonId in selectedLessons)
             {
-                return View(lesson);
+                var lesson = _context.Lessons.Find(lessonId);
+                if (lesson != null)
+                {
+                    lesson.TeacherId = Id;
+                    _context.Lessons.Update(lesson);
+                }
             }
+
+            _context.SaveChanges();
+            return RedirectToAction("Dashboard", new { Id });
         }
         [HttpGet]
 
@@ -98,7 +98,9 @@ namespace TestOBS.Controllers
         {
 
             var teacher = _context.Teachers
+            .Include(t => t.Lessons)
                                   .FirstOrDefault(t => t.Id == id);
+
 
             if (teacher == null)
             {

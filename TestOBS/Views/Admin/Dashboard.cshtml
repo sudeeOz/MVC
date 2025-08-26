@@ -219,9 +219,13 @@
                     <h1 class="display-5 welcome-title">
                         <i class="fas fa-user-shield me-3"></i>
                         Admin Sayfasına <br />
-                               Hoş Geldiniz
+                        Hoş Geldiniz 
                     </h1>
-
+                    <a href="#" class="logout-btn">
+                        <form asp-action="Login" asp-controller="Account" method="post">
+                            <button type="submit" class="btn btn-link">Çıkış Yap</button>
+                        </form>
+                    </a>
                     <p class="admin-subtitle">
                         <i class="fas fa-cogs me-2"></i>
                         Yönetim Paneli

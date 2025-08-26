@@ -12,6 +12,9 @@ namespace TestOBS.Models
         public int Credit { get; set; }
         [Required]
         public string Department { get; set; } = string.Empty;
+        // Foreign key
+        public int? TeacherId { get; set; }
+        public  Teacher? Teacher { get; set; }
 
     }
 }

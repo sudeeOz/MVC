@@ -63,52 +63,12 @@
             }
         }
 
-        @@keyframes float {
-            0%, 100% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
-        }
-
         @@keyframes shimmer {
             0% {
                 background-position: -200% center;
             }
             100% {
                 background-position: 200% center;
-            }
-        }
-
-        @@media (max-width: 768px) {
-            .form-container {
-                margin: 1rem;
-                padding: 1.5rem;
-            }
-            
-            .display-6 {
-                font-size: 1.8rem;
-            }
-            
-            .form-grid {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-        }
-
-        @@media (max-width: 480px) {
-            .form-container {
-                margin: 0.5rem;
-                padding: 1rem;
-            }
-            
-            .btn {
-                width: 100%;
-            }
-            
-            .display-6 {
-                font-size: 1.5rem;
             }
         }
 
@@ -213,6 +173,7 @@
         .form-group:nth-child(5) { animation-delay: 0.3s; }
         .form-group:nth-child(6) { animation-delay: 0.35s; }
         .form-group:nth-child(7) { animation-delay: 0.4s; }
+        .form-group:nth-child(8) { animation-delay: 0.45s; }
 
         .form-label {
             font-weight: 700;
@@ -289,26 +250,8 @@
             transition: left 0.6s ease;
         }
 
-        .btn-primary::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-
         .btn-primary:hover::before {
             left: 100%;
-        }
-
-        .btn-primary:hover::after {
-            width: 300px;
-            height: 300px;
         }
 
         .btn-primary:hover {
@@ -332,57 +275,55 @@
             grid-column: 1 / -1;
         }
 
-        /* Floating label effect */
-        .floating-label {
-            position: relative;
-        }
-
-        .floating-label .form-control:focus + .form-label,
-        .floating-label .form-control:not(:placeholder-shown) + .form-label {
-            transform: translateY(-1.5rem) scale(0.85);
-            color: #667eea;
-        }
-
-        /* Enhanced input groups */
-        .input-group {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Success state */
-        .form-control.is-valid {
-            border-color: #38a169;
-            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8" fill="%2338a169"><path d="M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z"/></svg>');
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-            background-size: 1rem;
-        }
-
-        /* Button container for better spacing */
         .button-container {
             text-align: center;
             margin-top: 2rem;
         }
 
-        /* Improved responsive design */
-        @@media (max-width: 576px) {
+       @@media (max-width: 768px) {
             .form-container {
-                padding: 2rem 1.5rem;
                 margin: 1rem;
-                border-radius: 20px;
+                padding: 1.5rem;
+            }
+            
+            .display-6 {
+                font-size: 1.8rem;
             }
             
             .form-grid {
                 grid-template-columns: 1fr;
-                gap: 1.5rem;
+                gap: 1rem;
+            }
+        }
+
+       @@media (max-width: 480px) {
+            .form-container {
+                margin: 0.5rem;
+                padding: 1rem;
             }
             
             .btn-primary {
-                padding: 0.875rem 2rem;
-                font-size: 1rem;
                 width: 100%;
             }
+            
+            .display-6 {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* ID field özel stil */
+        .id-field {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border-color: #4299e1;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .id-field:focus {
+            border-color: #2b6cb0;
+            background: #fff;
         }
     </style>
 </head>
@@ -394,7 +335,17 @@
         </h6>
 
         <form asp-action="CreateStudent" method="post" autocomplete="off">
+            @Html.AntiForgeryToken()
             <div class="form-grid">
+                <div class="form-group">
+                    <label asp-for="Id" class="form-label">
+                        <i class="fas fa-id-card input-icon"></i>
+                        Okul Numarası
+                    </label>
+                    <input asp-for="Id" class="form-control id-field" placeholder="1234" maxlength="4" />
+                    <span asp-validation-for="Id" class="text-danger"></span>
+                </div>
+
                 <div class="form-group">
                     <label asp-for="FirstName" class="form-label">
                         <i class="fas fa-user input-icon"></i>
@@ -429,14 +380,14 @@
                     </label>
                     <select asp-for="Department" class="form-select">
                         <option value="">Bölüm seçiniz</option>
-                        <option value="bilgisayar-muhendisligi">Bilgisayar Mühendisliği</option>
-                        <option value="elektrik-elektronik">Elektrik-Elektronik Mühendisliği</option>
-                        <option value="makine-muhendisligi">Makine Mühendisliği</option>
-                        <option value="endustri-muhendisligi">Endüstri Mühendisliği</option>
-                        <option value="isletme">İşletme</option>
-                        <option value="iktisat">İktisat</option>
-                        <option value="matematik">Matematik</option>
-                        <option value="fizik">Fizik</option>
+                        <option value="Bilgisayar Mühendisliği">Bilgisayar Mühendisliği</option>
+                        <option value="Elektrik-Elektronik Mühendisliği">Elektrik-Elektronik Mühendisliği</option>
+                        <option value="Makine Mühendisliği">Makine Mühendisliği</option>
+                        <option value="Endüstri Mühendisliği">Endüstri Mühendisliği</option>
+                        <option value="İşletme">İşletme</option>
+                        <option value="İktisat">İktisat</option>
+                        <option value="Matematik">Matematik</option>
+                        <option value="Fizik">Fizik</option>
                     </select>
                     <span asp-validation-for="Department" class="text-danger"></span>
                 </div>
@@ -449,22 +400,20 @@
                     <input asp-for="BirthOfDate" class="form-control" type="date" />
                     <span asp-validation-for="BirthOfDate" class="text-danger"></span>
                 </div>
+
                 <div class="form-group">
                     <label asp-for="Grade" class="form-label">
-                        <i class="fas fa-calendar-alt input-icon"></i>
+                        <i class="fas fa-layer-group input-icon"></i>
                         Sınıf
                     </label>
-                    <input asp-for="Grade" class="form-control" placeholder="Sınıfınızı giriniz" />
+                    <select asp-for="Grade" class="form-select">
+                        <option value="">Sınıf seçiniz</option>
+                        <option value="1">1. Sınıf</option>
+                        <option value="2">2. Sınıf</option>
+                        <option value="3">3. Sınıf</option>
+                        <option value="4">4. Sınıf</option>
+                    </select>
                     <span asp-validation-for="Grade" class="text-danger"></span>
-                </div>
-                
-                <div class="form-group">
-                    <label asp-for="Id" class="form-label">
-                        <i class="fas fa-id-card input-icon"></i>
-                        Id
-                    </label>
-                    <input asp-for="Id" class="form-control" placeholder="0000" />
-                    <span asp-validation-for="Id" class="text-danger"></span>
                 </div>
                 
                 <div class="form-group full-width">
@@ -472,7 +421,7 @@
                         <i class="fas fa-lock input-icon"></i>
                         Şifre
                     </label>
-                    <input asp-for="Password" class="form-control" type="password" placeholder="Güvenli bir şifre oluşturun" />
+                    <input asp-for="Password" class="form-control" type="password" placeholder="En az 6 karakter olmalıdır" />
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
             </div>
@@ -490,5 +439,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+    
+    <script>
+        // Okul numarası sadece rakam girişi
+        document.addEventListener('DOMContentLoaded', function() {
+            const idInput = document.querySelector('input[name="Id"]');
+            idInput.addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^0-9]/g, '');
+                if (this.value.length > 4) {
+                    this.value = this.value.slice(0, 4);
+                }
+            });
+        });
+    </script>
 </body>
 </html>

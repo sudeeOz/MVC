@@ -1,3 +1,5 @@
+@model TestOBS.Models.Student
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -333,7 +335,6 @@
             margin-bottom: 1rem;
             font-size: 0.9rem;
             text-align: center;
-            display: none;
         }
 
         .success-message {
@@ -345,7 +346,37 @@
             margin-bottom: 1rem;
             font-size: 0.9rem;
             text-align: center;
-            display: none;
+        }
+
+        .validation-summary {
+            background: rgba(245, 101, 101, 0.1);
+            border: 1px solid rgba(245, 101, 101, 0.3);
+            color: var(--error-color);
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            text-align: left;
+        }
+
+        .validation-summary ul {
+            margin: 0;
+            padding-left: 1.2rem;
+        }
+
+        .validation-summary li {
+            margin-bottom: 0.3rem;
+        }
+
+        .field-validation-error {
+            color: var(--error-color);
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+            display: block;
+        }
+
+        .input-validation-error {
+            border-color: var(--error-color) !important;
         }
 
         .security-info {
@@ -421,7 +452,7 @@
     </div>
 
     <div class="container">
-        <a href="javascript:history.back()" class="back-btn">
+        <a href="@Url.Action("Index", "Home")" class="back-btn">
             <i class="fas fa-arrow-left"></i> Geri
         </a>
 
@@ -434,54 +465,68 @@
                 <p class="student-subtitle">Öğrenci paneline erişim için giriş yapın</p>
             </div>
 
-            <div class="error-message" id="errorMessage">
-                <i class="fas fa-exclamation-triangle"></i>
-                Öğrenci numarası veya şifre hatalı!
-            </div>
+            @if (ViewBag.ErrorMessage != null)
+            {
+                <div class="error-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    @ViewBag.ErrorMessage
+                </div>
+            }
 
-            <div class="success-message" id="successMessage">
-                <i class="fas fa-check-circle"></i>
-                Giriş başarılı! Yönlendiriliyorsunuz...
-            </div>
+            @if (ViewBag.SuccessMessage != null)
+            {
+                <div class="success-message">
+                    <i class="fas fa-check-circle"></i>
+                    @ViewBag.SuccessMessage
+                </div>
+            }
 
-            <form id="studentLoginForm" action="/Student/Login" method="POST">
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div asp-validation-summary="All" class="validation-summary">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Lütfen aşağıdaki hataları düzeltin:</strong>
+                </div>
+            }
+
+            <form asp-action="Login" asp-controller="Student" method="post" novalidate>
+                @Html.AntiForgeryToken()
+                
                 <div class="form-group">
-                    <label for="studentNumber" class="form-label">
+                    <label asp-for="Id" class="form-label">
                         <i class="fas fa-id-card"></i> Öğrenci Numarası
                     </label>
                     <div style="position: relative;">
-                        <input type="text" 
-                               id="studentNumber" 
-                               name="studentNumber" 
+                        <input asp-for="Id" 
                                class="form-input" 
                                placeholder="Öğrenci numaranızı giriniz"
-                               required 
                                autocomplete="username">
                         <i class="fas fa-id-card input-icon"></i>
                     </div>
+                    <span asp-validation-for="Id" class="field-validation-error"></span>
                 </div>
 
                 <div class="form-group">
-                    <label for="password" class="form-label">
+                    <label asp-for="Password" class="form-label">
                         <i class="fas fa-lock"></i> Şifre
                     </label>
                     <div style="position: relative;">
-                        <input type="password" 
-                               id="password" 
-                               name="password" 
+                        <input asp-for="Password" 
+                               type="password" 
                                class="form-input" 
                                placeholder="Şifrenizi giriniz"
-                               required 
                                autocomplete="current-password">
                         <button type="button" class="password-toggle" onclick="togglePassword()">
                             <i class="fas fa-eye" id="toggleIcon"></i>
                         </button>
                     </div>
+                    <span asp-validation-for="Password" class="field-validation-error"></span>
                 </div>
 
                 <div class="remember-section">
                     <div class="remember-checkbox">
-                        <input type="checkbox" id="rememberMe" name="rememberMe">
+                        <input type="checkbox" id="rememberMe" name="RememberMe" value="true">
+                        <input type="hidden" name="RememberMe" value="false">
                         <label for="rememberMe">Beni hatırla</label>
                     </div>
                     <a href="#" class="forgot-link" onclick="showForgotPassword()">
@@ -489,7 +534,7 @@
                     </a>
                 </div>
 
-                <button type="submit" class="login-btn" id="loginBtn">
+                <button type="submit" class="login-btn">
                     <i class="fas fa-sign-in-alt"></i>
                     Giriş Yap
                 </button>
@@ -502,13 +547,13 @@
         </div>
     </div>
 
-    <footer class="footer>my-2">
+    <footer class="footer">
         <p>&copy; 2025 Mini OBS - Öğrenci Bilgi Sistemi</p>
     </footer>
 
     <script>
         function togglePassword() {
-            const passwordInput = document.getElementById('password');
+            const passwordInput = document.querySelector('input[name="Password"]');
             const toggleIcon = document.getElementById('toggleIcon');
             
             if (passwordInput.type === 'password') {
@@ -522,78 +567,32 @@
             }
         }
 
-        function showMessage(type, message) {
-            const errorMsg = document.getElementById('errorMessage');
-            const successMsg = document.getElementById('successMessage');
-            
-            // Önce tüm mesajları gizle
-            errorMsg.style.display = 'none';
-            successMsg.style.display = 'none';
-            
-            // İlgili mesajı göster
-            if (type === 'error') {
-                errorMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ' + message;
-                errorMsg.style.display = 'block';
-            } else if (type === 'success') {
-                successMsg.innerHTML = '<i class="fas fa-check-circle"></i> ' + message;
-                successMsg.style.display = 'block';
-            }
-        }
-
         function showForgotPassword() {
             alert('Şifre sıfırlama için öğrenci işleri ile iletişime geçiniz.\nİletişim: ogrenci@miniobs.edu.tr');
         }
 
-        // Form gönderimi
-        document.getElementById('studentLoginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const studentNumber = document.getElementById('studentNumber').value.trim();
-            const password = document.getElementById('password').value.trim();
-            const loginBtn = document.getElementById('loginBtn');
-            
-            // Basit validasyon
-            if (!studentNumber || !password) {
-                showMessage('error', 'Lütfen tüm alanları doldurunuz!');
-                return;
-            }
-
-            if (studentNumber.length < 5) {
-                showMessage('error', 'Öğrenci numarası en az 5 karakter olmalıdır!');
-                return;
-            }
-
-            if (password.length < 6) {
-                showMessage('error', 'Şifre en az 6 karakter olmalıdır!');
-                return;
-            }
-
-            // Loading durumu
-            loginBtn.disabled = true;
-            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Giriş yapılıyor...';
-
-            // Simülasyon - gerçek projede bu kısım sunucuya gönderilecek
-            setTimeout(() => {
-                // Demo amaçlı - gerçek validasyon sunucuda yapılacak
-                if (studentNumber === '12345' && password === '123456') {
-                    showMessage('success', 'Giriş başarılı! Yönlendiriliyorsunuz...');
-                    setTimeout(() => {
-                        // Öğrenci paneline yönlendir
-                        window.location.href = '/Student/Dashboard';
-                    }, 2000);
-                } else {
-                    showMessage('error', 'Öğrenci numarası veya şifre hatalı!');
-                    loginBtn.disabled = false;
-                    loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Giriş Yap';
-                }
-            }, 1500);
-        });
-
         // Enter tuşu ile form gönderimi
         document.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                document.getElementById('studentLoginForm').dispatchEvent(new Event('submit'));
+            if (e.key === 'Enter' && e.target.tagName !== 'BUTTON') {
+                const form = document.querySelector('form');
+                const submitBtn = form.querySelector('button[type="submit"]');
+                submitBtn.click();
             }
+        });
+
+        // Form gönderimi sırasında loading durumu
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Giriş yapılıyor...';
+            
+            // Hata durumunda butonu tekrar etkinleştir
+            setTimeout(() => {
+                if (document.querySelector('.error-message, .validation-summary')) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Giriş Yap';
+                }
+            }, 100);
         });
 
         // Sayfa yüklendiğinde animasyon
@@ -608,6 +607,30 @@
                 loginContainer.style.transform = 'translateY(0)';
             }, 200);
         });
+
+        // Client-side validation styling
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('.form-input');
+            inputs.forEach(input => {
+                input.addEventListener('blur', function() {
+                    if (this.hasAttribute('data-val-required') && !this.value.trim()) {
+                        this.classList.add('input-validation-error');
+                    } else {
+                        this.classList.remove('input-validation-error');
+                    }
+                });
+
+                input.addEventListener('input', function() {
+                    if (this.classList.contains('input-validation-error') && this.value.trim()) {
+                        this.classList.remove('input-validation-error');
+                    }
+                });
+            });
+        });
     </script>
+
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }
 </body>
 </html>
